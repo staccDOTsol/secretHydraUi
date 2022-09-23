@@ -19,16 +19,8 @@ export interface EnvironmentContextValues {
 export const ENVIRONMENTS: Environment[] = [
   {
     label: 'mainnet-beta',
-    primary: process.env.MAINNET_PRIMARY || 'https://ssc-dao.genesysgo.net',
+    primary: 'https://solana-mainnet.g.alchemy.com/v2/IWB_lF5cQVi-HfV19leFFMitqWKG2gp4',
     secondary: 'https://ssc-dao.genesysgo.net',
-  },
-  {
-    label: 'testnet',
-    primary: 'https://api.testnet.solana.com',
-  },
-  {
-    label: 'devnet',
-    primary: 'https://api.devnet.solana.com',
   },
 ]
 
@@ -40,14 +32,7 @@ export const getInitialProps = async ({
 }: {
   ctx: NextPageContext
 }): Promise<{ cluster: string }> => {
-  const cluster = (ctx.req?.headers.host || ctx.query.host)?.includes('dev')
-    ? 'devnet'
-    : (ctx.query.project || ctx.query.host)?.includes('test')
-    ? 'testnet'
-    : ctx.query.cluster || process.env.BASE_CLUSTER
-  return {
-    cluster: firstParam(cluster),
-  }
+  return{cluster: 'mainnet-beta'}
 }
 
 export function EnvironmentProvider({
@@ -58,11 +43,7 @@ export function EnvironmentProvider({
   defaultCluster: string
 }) {
   const { query } = useRouter()
-  const cluster = (query.project || query.host)?.includes('dev')
-    ? 'devnet'
-    : query.host?.includes('test')
-    ? 'testnet'
-    : query.cluster || defaultCluster || process.env.BASE_CLUSTER
+  const cluster = 'mainnet-beta'
   const foundEnvironment = ENVIRONMENTS.find((e) => e.label === cluster)
   const [environment, setEnvironment] = useState<Environment>(
     foundEnvironment ?? ENVIRONMENTS[0]!

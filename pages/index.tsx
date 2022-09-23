@@ -1,3 +1,5 @@
+
+
 import { Header } from 'common/Header'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
@@ -14,62 +16,56 @@ const Home: NextPage = () => {
       <Header />
       <main className="h-[80%] flex flex-1 flex-col justify-center items-center">
         <div className="block uppercase tracking-wide text-gray-700 text-lg font-bold mb-6">
-          Welcome to Hydra UI
+          Welcome to Stacc Hydra UI
         </div>
-        <form
-          className="w-full max-w-lg"
-          onSubmit={(e) => {
-            e.preventDefault()
-            router.push(
-              `/${walletName}${
-                ctx.environment.label !== 'mainnet-beta'
-                  ? `?cluster=${ctx.environment.label}`
-                  : ''
-              }`,
-              undefined,
-              { shallow: true }
-            )
-          }}
-        >
-          <div className="w-full mb-6">
-            <label
-              className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              htmlFor="grid-first-name"
-            >
-              Wallet Name
-            </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
-              id="grid-first-name"
-              onSubmit={() => alert('HEr')}
-              type="text"
-              placeholder="cardinal-wallet"
-              onChange={(e) => {
-                setWalletName(e.target.value)
-              }}
-              value={walletName}
-            />
-            <span className="text-xs mt-1 mb-3 block text-gray-400 italic">We currently only support Hydra wallets of membership model Wallet</span>
+        Turns out Metaplex removed the option of having hydras feeding other hydras, much to staccs dismay :D
+
+        <br /><br />
+        There are two hydras.
+<br /> <br />
+        The nft hydra has all the stacc nfts added, except about 500 that didnt play along. Those points went to Jares cardinal twitter nft.
+
+        <br />
+        The token hydra has tokens that can be bought with USDCs. They have four fees: buy/sell usdc/token. These go to jaregm.sol...
+        <br />
+        Most staccs have had their creators array adjusted and now pay the NFT hydra.
+        <br />
+        Every 24 hours 5% of the balance of jaregm.sol is sent to each hydra.
+        <br /><br />
+        Have fun.
+          <div className="w-full mb-6   flex flex-1 flex-col justify-center items-center">
+           <div>
+             <div
+               className="bg-blue-400 text-white hover:bg-blue-500 px-4 py-3 rounded-md float-right cursor-pointer"
+               onClick={() => {
+                 router.push(
+                   `/s4Etok`,
+                   undefined,
+                   { shallow: true }
+                 )
+               }}
+             >
+               Load Token Hydra
+             </div>
+           </div>
+           <br />
+           <br />
             <div>
               <div
                 className="bg-blue-400 text-white hover:bg-blue-500 px-4 py-3 rounded-md float-right cursor-pointer"
                 onClick={() => {
                   router.push(
-                    `/${walletName}${
-                      ctx.environment.label !== 'mainnet-beta'
-                        ? `?cluster=${ctx.environment.label}`
-                        : ''
-                    }`,
+                    `/s4Enfts`,
                     undefined,
                     { shallow: true }
                   )
                 }}
               >
-                Load Hydra Wallet
+                Load Nft Hydra
               </div>
             </div>
+           
           </div>
-        </form>
       </main>
     </div>
   )

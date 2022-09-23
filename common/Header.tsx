@@ -37,7 +37,7 @@ export const Header = () => {
             )
           }
         >
-          Hydra UI
+          Stacc Hydra UI
         </div>
         {ctx.environment.label !== 'mainnet-beta' && (
           <div className="cursor-pointer rounded-md bg-[#9945ff] p-1 text-[10px] italic text-white">

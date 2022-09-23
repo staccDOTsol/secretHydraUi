@@ -5,7 +5,7 @@ class AppDocument extends Document {
     return (
       <Html>
         <Head>
-          <title>Hydra UI</title>
+          <title>Stacc Hydra UI</title>
           <link rel="icon" href="/favicon.ico" />
           <link href="/globals.css" rel="stylesheet" />
 
