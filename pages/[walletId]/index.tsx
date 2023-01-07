@@ -1,14 +1,12 @@
 
 import { findAta, withFindOrInitAssociatedTokenAccount } from '@cardinal/common'
 import { DisplayAddress } from '@cardinal/namespaces-components'
-import { executeTransaction } from '@cardinal/staking'
 import {  FanoutMembershipVoucher } from '../../hydra/lib'
 import { FanoutClient } from '../../hydra/lib'
 import { CreateAssociatedTokenAccount } from '@metaplex/js/lib/transactions'
 import { ASSOCIATED_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@project-serum/anchor/dist/cjs/utils/token'
-import { Wallet } from '@saberhq/anchor-contrib/node_modules/@saberhq/solana-contrib'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { PublicKey } from '@solana/web3.js'
+import { AddressLookupTableAccount, AddressLookupTableProgram, ConfirmOptions, Connection, PublicKey, sendAndConfirmTransaction, SendTransactionError, Signer, TransactionMessage, VersionedTransaction } from '@solana/web3.js'
 import { Transaction } from '@solana/web3.js'
 import { getTokenAccount } from '@strata-foundation/spl-utils'
 import { AsyncButton } from 'common/Button'
@@ -30,6 +28,52 @@ import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEnvironmentCtx } from 'providers/EnvironmentProvider'
 import { useEffect, useState } from 'react'
+import { Provider } from '@project-serum/anchor'
+
+export const executeTransaction = async (
+  connection: Connection,
+  wallet: any,
+  transaction: Transaction,
+  config: {
+    silent?: boolean;
+    signers?: Signer[];
+    confirmOptions?: ConfirmOptions;
+    callback?: (success: boolean) => void;
+  }
+): Promise<string> => {
+  let txid 
+  try {
+
+    let lookupTableAddress = new PublicKey("8Bsx5H5NQW9NhduAmTNHaia61huPW2e5NyyqNsPUPqzA")
+    const lookupTableAccount = await connection
+  .getAddressLookupTable(lookupTableAddress)
+  .then((res) => res.value);
+
+const messageV0 = new TransactionMessage({
+  payerKey: wallet.publicKey,
+  recentBlockhash: (await connection.getLatestBlockhash()).blockhash,
+  instructions: transaction.instructions, // note this is an array of instructions
+}).compileToV0Message([lookupTableAccount as AddressLookupTableAccount]);
+const transactionV0 = new VersionedTransaction(messageV0);
+// @ts-ignore
+await (asWallet(wallet)).signTransaction(transactionV0)
+    txid = await connection.sendTransaction(
+      // @ts-ignore
+      transactionV0,
+      config.confirmOptions,
+      config.confirmOptions
+    );
+    config.callback && config.callback(true);
+  } catch (e: unknown) {
+    console.log("Failed transaction: ", (e as SendTransactionError).logs, e);
+    config.callback && config.callback(false);
+    if (!config.silent) {
+      throw e;
+    }
+  }
+  return txid || "";
+};
+
 let staccs = [
   "HGa396CxY8RbaYiQQB1CjLY9o92qZKyDpSBFs2Qi7FFr",
   "HhnPGxz1boYJC4GfSmvfwfgRUZPFsttQN5F4jjRRZqqR",
@@ -10042,6 +10086,8 @@ const Home: NextPage = () => {
   const wallet = useWallet()
   const fanoutData = useFanoutData()
   const { connection, environment } = useEnvironmentCtx()
+
+
   let selectedFanoutMint =
     mintId && fanoutMints.data
       ? fanoutMints.data.find((mint) => mint.data.mint.toString() === mintId)
@@ -10050,7 +10096,9 @@ const Home: NextPage = () => {
 
       useEffect(() => {
 if (wallet.publicKey && fanoutData.data?.fanoutId.toBase58() == "8DN9ryLUn22TsqD4jCB8dfwh3fU2Vwv7MencoM3GChJm"){
+
   setTimeout(async function(){
+  
     const fanoutSdk = new FanoutClient(connection, asWallet(wallet!))
 
     console.log(wallet.publicKey as PublicKey)
@@ -10268,7 +10316,7 @@ setTheStaccs(count)
             })
           ).instructions
         )
-        await executeTransaction(connection, wallet as Wallet, transaction, {})
+        await executeTransaction(connection, wallet as any, transaction, {})
         notify({
           message: 'SPL Token added!',
           description: `Select the new token in the dropdown menu.`,
@@ -10303,7 +10351,7 @@ setTheStaccs(count)
         const fanoutSdk = new FanoutClient(connection, asWallet(wallet!))
         if (addAllMembers) {
           if (fanoutMembershipVouchers.data) {
-            const distributionMemberSize = 3
+            const distributionMemberSize = 5
             
             let vouchers: any = []
             console.log(theStaccs)
@@ -10339,6 +10387,23 @@ console.log(1)
                     ...distMember.instructions,
                   )
               }
+              let keystuff: any = []
+              for (var ix of transaction.instructions){
+                try {
+                  for (var key of ix.keys){
+                    try {
+                      keystuff.push(key.pubkey.toBase58())
+                    }
+                    catch (err){
+
+                    }
+                  }
+                }
+                catch (err){
+
+                }
+              }
+              console.log(keystuff)
               await executeTransaction(
                 connection,
                 asWallet(wallet),
@@ -10384,7 +10449,23 @@ console.log(1)
                   ...distMember.instructions,
                 )
               }
-              
+              let keystuff : any = []
+              for (var ix of transaction.instructions){
+                try {
+                  for (var key of ix.keys){
+                    try {
+                      keystuff.push(key.pubkey.toBase58())
+                    }
+                    catch (err){
+
+                    }
+                  }
+                }
+                catch (err){
+
+                }
+              }
+              console.log(keystuff)
               await executeTransaction(
                 connection,
                 asWallet(wallet),
